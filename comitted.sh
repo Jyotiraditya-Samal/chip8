@@ -6,17 +6,17 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Generate 30 random dates between October 1, 2024, and today
+# Constants
 START_DATE="2024-10-01"
-END_DATE="2025-01-26"
+END_DATE=$(date '+%Y-%m-%d')
 DATE_FORMAT="+%Y-%m-%d"
 
 # Function to generate a random date
 generate_random_date() {
     local start=$(date -d "$START_DATE" +%s)
     local end=$(date -d "$END_DATE" +%s)
-    local random=$((RANDOM % (end - start + 1) + start))
-    echo $(date -d "@$random" $DATE_FORMAT)
+    local random_timestamp=$((RANDOM % (end - start + 1) + start))
+    echo $(date -d "@$random_timestamp" $DATE_FORMAT)
 }
 
 # Generate 30 commits
@@ -29,7 +29,7 @@ for i in {1..30}; do
     # Stage the file
     git add $FILENAME
 
-    # Generate a random date
+    # Generate a random date and time
     RANDOM_DATE=$(generate_random_date)
 
     # Commit with the random date
@@ -38,5 +38,3 @@ for i in {1..30}; do
 done
 
 echo "All 30 commits have been created with random dates."
-
-
