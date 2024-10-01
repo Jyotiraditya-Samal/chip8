@@ -6,35 +6,25 @@ if [ ! -d ".git" ]; then
     exit 1
 fi
 
-# Constants
+# Set the start date
 START_DATE="2024-10-01"
-END_DATE=$(date '+%Y-%m-%d')
-DATE_FORMAT="+%Y-%m-%d"
 
-# Function to generate a random date
-generate_random_date() {
-    local start=$(date -d "$START_DATE" +%s)
-    local end=$(date -d "$END_DATE" +%s)
-    local random_timestamp=$((RANDOM % (end - start + 1) + start))
-    echo $(date -d "@$random_timestamp" $DATE_FORMAT)
-}
-
-# Generate 30 commits
+# Loop for 30 days
 for i in {1..30}; do
+    # Calculate the commit date by adding days to the start date
+    COMMIT_DATE=$(date -d "$START_DATE +$((i - 1)) days" "+%Y-%m-%d")
+
     # Create a random text file
-    FILENAME="random_file_$i.txt"
-    echo "This is a test file number $i" > $FILENAME
+    FILENAME="test_file_$i.txt"
+    echo "This is test file $i for date $COMMIT_DATE" > $FILENAME
     echo "Created file: $FILENAME"
 
     # Stage the file
     git add $FILENAME
 
-    # Generate a random date and time
-    RANDOM_DATE=$(generate_random_date)
-
-    # Commit with the random date
-    git commit --date="$RANDOM_DATE" -m "test commit $i on $RANDOM_DATE"
-    echo "Committed $FILENAME with date $RANDOM_DATE"
+    # Commit the file with the specific date
+    GIT_AUTHOR_DATE="$COMMIT_DATE" GIT_COMMITTER_DATE="$COMMIT_DATE" git commit -m "Test commit $i on $COMMIT_DATE"
+    echo "Committed $FILENAME with date $COMMIT_DATE"
 done
 
-echo "All 30 commits have been created with random dates."
+echo "All 30 commits have been created with consecutive dates starting from $START_DATE."
